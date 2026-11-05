@@ -1,1 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://ejemplo.com/catalogo/soap"
+    targetNamespace="http://ejemplo.com/catalogo/soap"
+    elementFormDefault="qualified">
 
+    <!-- Identificador positivo compatible con un int de Java. -->
+    <xs:simpleType name="IdProducto">
+        <xs:restriction base="xs:int">
+            <xs:minInclusive value="1"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <!-- Solicitud para consultar un producto. -->
+    <xs:element name="consultarProductoRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="id" type="tns:IdProducto"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <!-- Respuesta de una consulta exitosa. -->
+    <xs:element name="consultarProductoResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="producto" type="tns:ProductoSoap"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <!-- Datos del producto que se devuelve. -->
+    <xs:complexType name="ProductoSoap">
+        <xs:sequence>
+            <xs:element name="id" type="tns:IdProducto"/>
+            <xs:element name="nombre" type="xs:string"/>
+            <xs:element name="precio" type="xs:decimal"/>
+            <xs:element name="existencias" type="xs:int"/>
+            <xs:element name="activo" type="xs:boolean"/>
+        </xs:sequence>
+    </xs:complexType>
+</xs:schema>

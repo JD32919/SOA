@@ -5,7 +5,7 @@
 package com.example.catalogo.modelo;
 
 public record LineaReserva(
-        Integer productId,
+        Integer productoId,
         Integer cantidad
         ){
 }
