@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=">
+        <title>Papeleria</title>
+        <style>
+            body{font-family: Arial, sans-serif; max-width: 800px; margin: 20px auto; padding: 0 10px}
+            section{border: 1px solid #999; padding: 10px; margin-bottom: 15px;}
+            label{display: block; margin-top: 8px;}
+            input{width: 100%; box-sizing: border-box; padding: 4px}
+            button{margin-top: 10px;}
+            table{border-collapse: collapse; width: 100%; margin-top: 10px;}
+            th, td{border: 1px solid #999; padding: 4px; text-align: left;}
+            pre{background: #eee; padding: 8px; white-space: pre-wrap;}
+            .exito{color: green;}
+            .error{color: red;}
+            .detalle table {width: auto; min-width: 60%; margin-top: 10px;}
+            .detalle th {background: #eee; width: 200px;}
+        </style>
+    </head>
+    <body>
+        <h1>Papeleria</h1>
+        <h2>Catalogo y Inventario   </h2>
+
+        <section>
+            <h3>Productos   </h3>
+            <button type="button" id="btnListar">Ver Productos   </button>
+
+            <table id="tablaProductos" hidden>
+                <thead>
+                    <tr>
+                        <th>ID</th><th>Nombre</th><th>Precio</th>
+                        <th>Existencias</th><th>Activo</th>
+                    </tr>
+                </thead>
+                <tbody id="cuerpoProductos"></tbody>
+
+            </table>
+
+            <form id="formConsultaProducto">
+                <label for="consultaId">Consultar un producto por ID</label>
+                <input type="text" id="consultaId">
+                <button type="submit">Consultar</button>
+            </form>
+
+            <p id="mensajeProductos" class="mensaje"></p>
+            <div id="salidaProducto" class="detalle"></div>
+        </section>
+
+        <section>
+            <h3>Crear producto</h3>
+            <form id="formCrear">
+                <label for="crearNombre">Nombre</label>
+                <input type="text" id="crearNombre">
+                <label for="crearPrecio">Precio</label>
+                <input type="text" id="crearPrecio">
+                <label for="crearExistencias">Existencias</label>
+                <input type="text" id="crearExistencias">
+                <button type="submit">Crear producto</button>
+
+            </form>
+            <p id="mensajeCrear" class="mensaje"></p>
+            <div id="salidaCrear" class="detalle"></div>
+        </section>
+
+        <section>
+            <h3>Cambiar existencias</h3>
+            <form id="formExistencias">
+                <label for="existenciasId">ID del producto</label>
+                <input type="text" id="existenciasId">
+                <label for="existenciasValor">Nuevas existencias</label>
+                <input type="text" id="existenciasValor">
+                <button type="submit">Cambiar wxistencias</button>
+
+            </form>
+            <p id="mensajeExistencias" class="mensaje"></p>
+            <div id="salidaExistencias" class="detalle"></div>
+
+        </section>
+
+        <section>
+            <h3>Reservar existencias</h3>
+            <form id="formReserva">
+                <label for="reservaUuid">UUID de la operacion</label>
+                <input type="text" id="reservaUuid">
+                <button type="button" id="btnNuevoUuid">Generar UUID nuevo</button>
+
+                <label for="reservaLineas">Lineas (cantidad, separadas por coma)</label>
+                <input type="text" id="reservaLineas" placeholder="1:2, 2:5">
+
+                <button type="submit">Reservar</button>
+                <button type="button" id="btnCancelarReserva">Cancelar reserva</button>
+                <button type="button" id="btnConsultarReserva">Consultar reserva</button>
+
+
+            </form>
+            <p id="mensajeReserva" class="mensaje"></p>
+            <div id="salidaReserva" class="detalle"></div>
+        </section>
+
+        <script src="app.js"></script>
+    </body>
+</html>
