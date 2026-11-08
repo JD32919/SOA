@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://ejemplo.com/clientes/soap"
+    targetNamespace="http://ejemplo.com/clientes/soap"
+    elementFormDefault="qualified">
+
+    <!-- Identificador positivo compatible con un int de Java. -->
+    <xs:simpleType name="IdCliente">
+        <xs:restriction base="xs:int">
+            <xs:minInclusive value="1"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <!-- Solicitud para consultar un cliente y su credito. -->
+    <xs:element name="consultarClienteRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="id" type="tns:IdCliente"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <!-- Respuesta de una consulta exitosa. -->
+    <xs:element name="consultarClienteResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="cliente" type="tns:ClienteSoap"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <!-- Datos del cliente que se devuelven. -->
+    <xs:complexType name="ClienteSoap">
+        <xs:sequence>
+            <xs:element name="id" type="tns:IdCliente"/>
+            <xs:element name="nombre" type="xs:string"/>
+            <xs:element name="email" type="xs:string"/>
+            <xs:element name="habilitado" type="xs:boolean"/>
+            <xs:element name="limiteCredito" type="xs:decimal"/>
+            <xs:element name="disponible" type="xs:decimal"/>
+        </xs:sequence>
+    </xs:complexType>
+</xs:schema>
