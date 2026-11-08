@@ -2,7 +2,7 @@
 <html lang="es">
     <head>
         <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Papeleria</title>
         <style>
             body{font-family: Arial, sans-serif; max-width: 800px; margin: 20px auto; padding: 0 10px}
@@ -71,7 +71,7 @@
                 <input type="text" id="existenciasId">
                 <label for="existenciasValor">Nuevas existencias</label>
                 <input type="text" id="existenciasValor">
-                <button type="submit">Cambiar wxistencias</button>
+                <button type="submit">Cambiar existencias</button>
 
             </form>
             <p id="mensajeExistencias" class="mensaje"></p>
@@ -97,6 +97,95 @@
             </form>
             <p id="mensajeReserva" class="mensaje"></p>
             <div id="salidaReserva" class="detalle"></div>
+        </section>
+
+        <h2>Clientes</h2>
+
+        <section>
+            <h3>Clientes registrados</h3>
+            <button type="button" id="btnListarClientes">Ver clientes</button>
+
+            <table id="tablaClientes" hidden>
+                <thead>
+                    <tr>
+                        <th>ID</th><th>Nombre</th><th>Email</th>
+                        <th>Limite</th><th>Habilitado</th>
+                    </tr>
+                </thead>
+                <tbody id="cuerpoClientes"></tbody>
+            </table>
+
+            <form id="formConsultaCliente">
+                <label for="clienteConsultaId">Consultar un cliente por ID</label>
+                <input type="text" id="clienteConsultaId">
+                <button type="submit">Consultar</button>
+                <button type="button" id="btnCreditoCliente">Ver credito</button>
+                <button type="button" id="btnHistorialCliente">Ver historial</button>
+            </form>
+
+            <p id="mensajeClientes" class="mensaje"></p>
+            <div id="salidaCliente" class="detalle"></div>
+            <table id="tablaHistorial" hidden>
+                <thead>
+                    <tr>
+                        <th>UUID</th><th>Monto</th><th>Estado</th><th>Fecha</th>
+                    </tr>
+                </thead>
+                <tbody id="cuerpoHistorial"></tbody>
+            </table>
+        </section>
+
+        <section>
+            <h3>Crear cliente</h3>
+            <form id="formCrearCliente">
+                <label for="clienteNombre">Nombre</label>
+                <input type="text" id="clienteNombre">
+                <label for="clienteEmail">Email</label>
+                <input type="text" id="clienteEmail">
+                <label for="clienteTelefono">Telefono (opcional)</label>
+                <input type="text" id="clienteTelefono">
+                <label for="clienteLimite">Limite de credito</label>
+                <input type="text" id="clienteLimite">
+                <button type="submit">Crear cliente</button>
+            </form>
+            <p id="mensajeCrearCliente" class="mensaje"></p>
+            <div id="salidaCrearCliente" class="detalle"></div>
+        </section>
+
+        <section>
+            <h3>Habilitacion y limite</h3>
+            <form id="formHabilitacion">
+                <label for="habClienteId">ID del cliente</label>
+                <input type="text" id="habClienteId">
+                <label for="habMotivo">Motivo (solo para inhabilitar)</label>
+                <input type="text" id="habMotivo">
+                <button type="button" id="btnHabilitar">Habilitar</button>
+                <button type="button" id="btnInhabilitar">Inhabilitar</button>
+
+                <label for="habLimite">Nuevo limite de credito</label>
+                <input type="text" id="habLimite">
+                <button type="button" id="btnCambiarLimite">Cambiar limite</button>
+            </form>
+            <p id="mensajeHabilitacion" class="mensaje"></p>
+            <div id="salidaHabilitacion" class="detalle"></div>
+        </section>
+
+        <section>
+            <h3>Consumos (lo que hara Ventas)</h3>
+            <form id="formConsumo">
+                <label for="consumoClienteId">ID del cliente</label>
+                <input type="text" id="consumoClienteId">
+                <label for="consumoUuid">UUID de la operacion</label>
+                <input type="text" id="consumoUuid">
+                <button type="button" id="btnNuevoUuidConsumo">Generar UUID nuevo</button>
+                <label for="consumoMonto">Monto</label>
+                <input type="text" id="consumoMonto">
+
+                <button type="submit">Registrar consumo</button>
+                <button type="button" id="btnCancelarConsumo">Cancelar consumo</button>
+            </form>
+            <p id="mensajeConsumo" class="mensaje"></p>
+            <div id="salidaConsumo" class="detalle"></div>
         </section>
 
         <script src="app.js"></script>

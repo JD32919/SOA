@@ -1,6 +1,7 @@
 "use strict";
 
 const API_CATALOGO = "http://localhost:9001/api";
+const API_CLIENTES = "http://localhost:9003/api";
 
 const elemento = (id) => document.getElementById(id);
 
@@ -9,10 +10,22 @@ const ETIQUETAS ={
     nombre: "Nombre",
     precio: "Precio",
     existencias: "Existencias",
-    activo: "Activo";
+    activo: "Activo",
     operacionId: "UUID de la operacion",
     estado: "Estado",
-    lineas: "Lineas reservadas"
+    lineas: "Lineas reservadas",
+    email: "Email",
+    telefono: "Telefono",
+    limiteCredito: "Limite de credito",
+    habilitado: "Habilitado",
+    motivoInhabilitacion: "Motivo de inhabilitacion",
+    clienteId: "ID del cliente",
+    consumido: "Consumido",
+    disponible: "Disponible",
+    puedeComprar: "Puede comprar",
+    motivo: "Motivo",
+    monto: "Monto",
+    registradoEn: "Fecha"
 };
 
 
@@ -55,7 +68,7 @@ function mostrarJson(id,datos){
         } else if (typeof valor === "boolean") {
             celdaValor.textContent = valor ? "Sí" : "No";
 
-        } else if (clave === "precio") {
+        } else if (clave === "precio" || clave === "limiteCredito" || clave === "consumido" || clave === "disponible" || clave === "monto") {
             celdaValor.textContent = `$${Number(valor).toFixed(2)}`;
 
         } else {
@@ -151,7 +164,7 @@ async function solicitarJson(url, opciones = {}){
             const detalle =
             datos && typeof datos.mensaje === "string"
             ? datos.mensaje
-            : `El servicio respondio con HTTP $(respuesta.status}.`;
+            : `El servicio respondio con HTTP ${respuesta.status}.`;
 
             throw new Error(detalle);
             
@@ -365,3 +378,229 @@ elemento("btnConsultarReserva").addEventListener("click", async () => {
 
 elemento("reservaUuid").value = crypto.randomUUID();
 listarProductos();
+
+//clientes
+
+function leerMonto(idCampo, nombre, permitirCero){
+    const texto = elemento(idCampo).value.trim();
+    const numero = Number(texto);
+
+    if(texto === "" || Number.isNaN(numero) || numero < 0 || (!permitirCero && numero === 0)){
+        throw new Error(`${nombre} debe ser un numero ${permitirCero ? "mayor o igual a cero" : "mayor que cero"}.`);
+    }
+    return numero;
+}
+
+async function listarClientes(){
+    elemento("tablaClientes").hidden = true;
+    elemento("cuerpoClientes").replaceChildren();
+
+    mostrarMensaje("mensajeClientes", "consultando clientes...");
+
+    try{
+        const clientes = await solicitarJson(`${API_CLIENTES}/clientes`);
+
+        if(!Array.isArray(clientes)){
+            throw new Error("El servicio no devolvio una lista.");
+        }
+
+        for (const cliente of clientes){
+            const fila = document.createElement("tr");
+            const valores = [
+                cliente.id,
+                cliente.nombre,
+                cliente.email,
+                `$${Number(cliente.limiteCredito).toFixed(2)}`,
+                cliente.habilitado ? "Si" : "No"
+            ];
+            for (const valor of valores){
+                const celda = document.createElement("td");
+                celda.textContent = String(valor ?? "");
+                fila.appendChild(celda);
+            }
+            elemento("cuerpoClientes").appendChild(fila);
+        }
+
+        elemento("tablaClientes").hidden = clientes.length === 0;
+        mostrarMensaje("mensajeClientes", `Clientes registrados: ${clientes.length}.`);
+    } catch (error) {
+        mostrarMensaje("mensajeClientes", error.message, true);
+    }
+}
+
+function limpiarSalidaCliente(){
+    elemento("salidaCliente").textContent = "";
+    elemento("tablaHistorial").hidden = true;
+    elemento("cuerpoHistorial").replaceChildren();
+}
+
+elemento("btnListarClientes").addEventListener("click", listarClientes);
+
+elemento("formConsultaCliente").addEventListener("submit", async (evento) => {
+    evento.preventDefault();
+    limpiarSalidaCliente();
+
+    try{
+        const id = leerEntero("clienteConsultaId", 1, "El identificador");
+        const cliente = await solicitarJson(`${API_CLIENTES}/clientes/${id}`);
+
+        mostrarMensaje("mensajeClientes", "Consulta realizada correctamente.");
+        mostrarJson("salidaCliente", cliente);
+    } catch(error){
+        mostrarMensaje("mensajeClientes", error.message, true);
+    }
+});
+
+elemento("btnCreditoCliente").addEventListener("click", async () => {
+    limpiarSalidaCliente();
+
+    try{
+        const id = leerEntero("clienteConsultaId", 1, "El identificador");
+        const credito = await solicitarJson(`${API_CLIENTES}/clientes/${id}/credito`);
+
+        mostrarMensaje("mensajeClientes", `Credito disponible: $${Number(credito.disponible).toFixed(2)}.`);
+        mostrarJson("salidaCliente", credito);
+    } catch(error){
+        mostrarMensaje("mensajeClientes", error.message, true);
+    }
+});
+
+elemento("btnHistorialCliente").addEventListener("click", async () => {
+    limpiarSalidaCliente();
+
+    try{
+        const id = leerEntero("clienteConsultaId", 1, "El identificador");
+        const historial = await solicitarJson(`${API_CLIENTES}/clientes/${id}/historial`);
+
+        for (const consumo of historial){
+            const fila = document.createElement("tr");
+            const valores = [
+                consumo.operacionId,
+                `$${Number(consumo.monto).toFixed(2)}`,
+                consumo.estado,
+                new Date(consumo.registradoEn).toLocaleString()
+            ];
+            for (const valor of valores){
+                const celda = document.createElement("td");
+                celda.textContent = String(valor ?? "");
+                fila.appendChild(celda);
+            }
+            elemento("cuerpoHistorial").appendChild(fila);
+        }
+
+        elemento("tablaHistorial").hidden = historial.length === 0;
+        mostrarMensaje("mensajeClientes", `Consumos en el historial: ${historial.length}.`);
+    } catch(error){
+        mostrarMensaje("mensajeClientes", error.message, true);
+    }
+});
+
+//crear cliente
+elemento("formCrearCliente").addEventListener("submit", async (evento) => {
+    evento.preventDefault();
+
+    try {
+        const cuerpo = {
+            nombre: elemento("clienteNombre").value.trim(),
+            email: elemento("clienteEmail").value.trim(),
+            telefono: elemento("clienteTelefono").value.trim(),
+            limiteCredito: leerMonto("clienteLimite", "El limite de credito", true)
+        };
+
+        const cliente = await enviarJson(`${API_CLIENTES}/clientes`, "POST", cuerpo);
+
+        mostrarMensaje("mensajeCrearCliente", `Cliente ${cliente.id} creado.`);
+        mostrarJson("salidaCrearCliente", cliente);
+        await listarClientes();
+    } catch (error){
+        elemento("salidaCrearCliente").textContent = "";
+        mostrarMensaje("mensajeCrearCliente", error.message, true);
+    }
+});
+
+//habilitacion y limite
+async function cambiarHabilitacion(habilitado){
+    try {
+        const id = leerEntero("habClienteId", 1, "El identificador");
+        const cuerpo = { habilitado, motivo: elemento("habMotivo").value.trim() };
+
+        const cliente = await enviarJson(`${API_CLIENTES}/clientes/${id}/habilitacion`, "PUT", cuerpo);
+
+        mostrarMensaje("mensajeHabilitacion", habilitado ? "Cliente habilitado." : "Cliente inhabilitado.");
+        mostrarJson("salidaHabilitacion", cliente);
+        await listarClientes();
+    } catch (error){
+        elemento("salidaHabilitacion").textContent = "";
+        mostrarMensaje("mensajeHabilitacion", error.message, true);
+    }
+}
+
+elemento("btnHabilitar").addEventListener("click", () => cambiarHabilitacion(true));
+elemento("btnInhabilitar").addEventListener("click", () => cambiarHabilitacion(false));
+
+elemento("btnCambiarLimite").addEventListener("click", async () => {
+    try {
+        const id = leerEntero("habClienteId", 1, "El identificador");
+        const limiteCredito = leerMonto("habLimite", "El limite de credito", true);
+
+        const cliente = await enviarJson(`${API_CLIENTES}/clientes/${id}/limite`, "PUT", { limiteCredito });
+
+        mostrarMensaje("mensajeHabilitacion", "Limite actualizado.");
+        mostrarJson("salidaHabilitacion", cliente);
+        await listarClientes();
+    } catch (error){
+        elemento("salidaHabilitacion").textContent = "";
+        mostrarMensaje("mensajeHabilitacion", error.message, true);
+    }
+});
+
+//consumos, esto es lo que va a llamar ventas al armar un pedido
+function leerUuidConsumo(){
+    const texto = elemento("consumoUuid").value.trim();
+    if(!FORMATO_UUID.test(texto)){
+        throw new Error("Escribe un UUID valido o genera uno nuevo.");
+    }
+    return texto.toLowerCase();
+}
+
+elemento("btnNuevoUuidConsumo").addEventListener("click", () => {
+    elemento("consumoUuid").value = crypto.randomUUID();
+});
+
+elemento("formConsumo").addEventListener("submit", async (evento) => {
+    evento.preventDefault();
+
+    try {
+        const id = leerEntero("consumoClienteId", 1, "El identificador");
+        const uuid = leerUuidConsumo();
+        const monto = leerMonto("consumoMonto", "El monto", false);
+
+        const consumo = await enviarJson(`${API_CLIENTES}/clientes/${id}/consumos/${uuid}`, "PUT", { monto });
+
+        mostrarMensaje("mensajeConsumo", `Consumo ${consumo.estado}.`);
+        mostrarJson("salidaConsumo", consumo);
+    } catch (error){
+        elemento("salidaConsumo").textContent = "";
+        mostrarMensaje("mensajeConsumo", error.message, true);
+    }
+});
+
+elemento("btnCancelarConsumo").addEventListener("click", async () => {
+    try {
+        const id = leerEntero("consumoClienteId", 1, "El identificador");
+        const uuid = leerUuidConsumo();
+
+        const consumo = await solicitarJson(`${API_CLIENTES}/clientes/${id}/consumos/${uuid}/cancelacion`,
+            { method: "PUT" }
+        );
+
+        mostrarMensaje("mensajeConsumo", `Consumo ${consumo.estado}.`);
+        mostrarJson("salidaConsumo", consumo);
+    } catch (error){
+        elemento("salidaConsumo").textContent = "";
+        mostrarMensaje("mensajeConsumo", error.message, true);
+    }
+});
+
+elemento("consumoUuid").value = crypto.randomUUID();
+listarClientes();
