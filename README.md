@@ -25,6 +25,8 @@ Puerto `9003`, base `clientes_db`. Datos del cliente, habilitacion, limite de cr
 Los consumos usan el mismo UUID de operacion que Ventas manda a catalogo. Repetir la llamada con
 los mismos datos regresa lo mismo; si la cancelacion llega primero, el registro posterior da 409.
 
+Documentacion completa: [docs/documentacion-clientes.md](docs/documentacion-clientes.md)
+
 ## SOAP
 
 `POST /ws`, WSDL en `/ws/clientes.wsdl`, operacion `consultarCliente` (namespace `http://ejemplo.com/clientes/soap`).
