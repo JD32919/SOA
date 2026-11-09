@@ -188,6 +188,62 @@
             <div id="salidaConsumo" class="detalle"></div>
         </section>
 
+        <h2>Impresiones</h2>
+ 
+        <section>
+            <h3>Trabajos de impresion</h3>
+            <button type="button" id="btnListarImpresiones">Ver todos</button>
+            <button type="button" id="btnColaImpresiones">Ver cola</button>
+ 
+            <table id="tablaImpresiones" hidden>
+                <thead>
+                    <tr>
+                        <th>ID</th><th>Cliente</th><th>Documento</th><th>Tipo</th>
+                        <th>Hojas est.</th><th>Hojas reales</th><th>Costo</th><th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody id="cuerpoImpresiones"></tbody>
+            </table>
+ 
+            <p id="mensajeImpresiones" class="mensaje"></p>
+        </section>
+ 
+        <section>
+            <h3>Crear trabajo de impresion</h3>
+            <form id="formCrearImpresion">
+                <label for="impClienteId">ID del cliente</label>
+                <input type="text" id="impClienteId">
+                <label for="impDocumento">Documento</label>
+                <input type="text" id="impDocumento">
+                <label for="impTipo">Tipo</label>
+                <select id="impTipo" style="width: 100%; box-sizing: border-box; padding: 4px">
+                    <option value="BN">Blanco y negro</option>
+                    <option value="COLOR">Color</option>
+                </select>
+                <label for="impHojasEstimadas">Hojas estimadas</label>
+                <input type="text" id="impHojasEstimadas">
+                <button type="submit">Crear trabajo</button>
+            </form>
+            <p id="mensajeCrearImpresion" class="mensaje"></p>
+            <div id="salidaCrearImpresion" class="detalle"></div>
+        </section>
+ 
+        <section>
+            <h3>Consultar y avanzar un trabajo</h3>
+            <form id="formOperarImpresion">
+                <label for="impTrabajoId">ID del trabajo</label>
+                <input type="text" id="impTrabajoId">
+                <label for="impHojasReales">Hojas reales usadas (solo para terminar)</label>
+                <input type="text" id="impHojasReales">
+                <button type="button" id="btnConsultarImpresion">Consultar</button>
+                <button type="button" id="btnIniciarImpresion">Iniciar</button>
+                <button type="button" id="btnTerminarImpresion">Terminar</button>
+                <button type="button" id="btnCancelarImpresion">Cancelar</button>
+            </form>
+            <p id="mensajeOperarImpresion" class="mensaje"></p>
+            <div id="salidaOperarImpresion" class="detalle"></div>
+        </section>
+        
         <script src="app.js"></script>
     </body>
 </html>
