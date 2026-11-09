@@ -6,6 +6,7 @@ Corre en el puerto **5500** y llama a cada servicio por REST.
 | Servicio | Puerto | Que se puede hacer desde la pagina |
 |---|---|---|
 | Catalogo e inventario | 9001 | ver, consultar y crear productos, cambiar existencias, reservar / cancelar / consultar reservas |
+| Ventas | 9002 | crear, listar, consultar y cancelar ventas |
 | Clientes | 9003 | ver, consultar y crear clientes, habilitar / inhabilitar, cambiar limite, ver credito e historial, registrar / cancelar consumos |
 | Impresiones | 9004 | ver trabajos y la cola, crear trabajos, consultar, iniciar, terminar y cancelar |
 
@@ -48,6 +49,7 @@ Despues abrir http://127.0.0.1:5500 en el navegador.
 - **Crear cliente**: nombre, email, telefono (opcional) y limite de credito.
 - **Habilitacion y limite**: habilitar o inhabilitar (al inhabilitar el motivo es obligatorio) y cambiar el limite de credito.
 - **Consumos**: simula lo que hara Ventas al armar un pedido. Se registra un monto con un UUID de operacion y se puede cancelar con el mismo UUID. Si el cliente esta inhabilitado o el monto supera su credito disponible, el servicio lo rechaza.
+- **Ventas**: permite crear una venta con cliente, UUID y líneas de productos; también listar, consultar y cancelar ventas. Ventas consulta el catálogo y el crédito del cliente.
 
 ## Secciones de Impresiones
 

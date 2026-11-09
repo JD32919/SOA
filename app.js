@@ -1,6 +1,7 @@
 "use strict";
 
 const API_CATALOGO = "http://localhost:9001/api";
+const API_VENTAS = "http://localhost:9002/api";
 const API_CLIENTES = "http://localhost:9003/api";
 
 const elemento = (id) => document.getElementById(id);
@@ -25,7 +26,9 @@ const ETIQUETAS ={
     puedeComprar: "Puede comprar",
     motivo: "Motivo",
     monto: "Monto",
-    registradoEn: "Fecha"
+    registradoEn: "Fecha",
+    total: "Total",
+    creadoEn: "Fecha de creacion"
 };
 
 
@@ -116,8 +119,8 @@ function leerUuid(){
 
 }
 
-function leerLineas(){
-    const texto = elemento("reservaLineas").value.trim();
+function leerLineas(idCampo){
+    const texto = elemento(idCampo).value.trim();
 
     if(texto === ""){
         throw new Error("Escribe al menos una linea, por ejemplo 1:2.");                
@@ -164,6 +167,8 @@ async function solicitarJson(url, opciones = {}){
             const detalle =
             datos && typeof datos.mensaje === "string"
             ? datos.mensaje
+            : datos && typeof datos.detail === "string"
+            ? datos.detail
             : `El servicio respondio con HTTP ${respuesta.status}.`;
 
             throw new Error(detalle);
@@ -325,7 +330,7 @@ elemento("formReserva").addEventListener("submit", async (evento) => {
 
     try {
         const uuid = leerUuid();
-        const lineas = leerLineas();
+        const lineas = leerLineas("reservaLineas");
 
         const reserva = await enviarJson(`${API_CATALOGO}/reservas/${uuid}`,
             "PUT",
@@ -604,137 +609,3 @@ elemento("btnCancelarConsumo").addEventListener("click", async () => {
 
 elemento("consumoUuid").value = crypto.randomUUID();
 listarClientes();
-
-//impresiones
- 
-const API_IMPRESIONES = "http://localhost:9004/api";
- 
-Object.assign(ETIQUETAS, {
-    documento: "Documento",
-    tipo: "Tipo",
-    hojasEstimadas: "Hojas estimadas",
-    hojasReales: "Hojas reales",
-    costo: "Costo",
-    fechaCreacion: "Fecha de creacion"
-});
- 
-function conCostoFormateado(trabajo){
-    return { ...trabajo, costo: `$${Number(trabajo.costo).toFixed(2)}` };
-}
- 
-function llenarTablaImpresiones(trabajos){
-    elemento("cuerpoImpresiones").replaceChildren();
- 
-    for (const trabajo of trabajos){
-        const fila = document.createElement("tr");
-        const valores = [
-            trabajo.id,
-            trabajo.clienteId,
-            trabajo.documento,
-            trabajo.tipo,
-            trabajo.hojasEstimadas,
-            trabajo.hojasReales,
-            `$${Number(trabajo.costo).toFixed(2)}`,
-            trabajo.estado
-        ];
-        for (const valor of valores){
-            const celda = document.createElement("td");
-            celda.textContent = String(valor ?? "");
-            fila.appendChild(celda);
-        }
-        elemento("cuerpoImpresiones").appendChild(fila);
-    }
- 
-    elemento("tablaImpresiones").hidden = trabajos.length === 0;
-}
- 
-async function listarImpresiones(ruta, descripcion){
-    elemento("tablaImpresiones").hidden = true;
-    elemento("cuerpoImpresiones").replaceChildren();
- 
-    mostrarMensaje("mensajeImpresiones", "consultando impresiones...");
- 
-    try{
-        const trabajos = await solicitarJson(`${API_IMPRESIONES}/impresiones${ruta}`);
- 
-        if(!Array.isArray(trabajos)){
-            throw new Error("El servicio no devolvio una lista.");
-        }
- 
-        llenarTablaImpresiones(trabajos);
-        mostrarMensaje("mensajeImpresiones", `${descripcion}: ${trabajos.length}.`);
-    } catch (error) {
-        mostrarMensaje("mensajeImpresiones", error.message, true);
-    }
-}
- 
-elemento("btnListarImpresiones").addEventListener("click", () => {
-    listarImpresiones("", "Trabajos registrados");
-});
- 
-elemento("btnColaImpresiones").addEventListener("click", () => {
-    listarImpresiones("/cola", "Trabajos en cola");
-});
- 
-//crear trabajo
-elemento("formCrearImpresion").addEventListener("submit", async (evento) => {
-    evento.preventDefault();
- 
-    try {
-        const cuerpo = {
-            clienteId: leerEntero("impClienteId", 1, "El cliente"),
-            documento: elemento("impDocumento").value.trim(),
-            tipo: elemento("impTipo").value,
-            hojasEstimadas: leerEntero("impHojasEstimadas", 1, "Las hojas estimadas")
-        };
- 
-        const trabajo = await enviarJson(`${API_IMPRESIONES}/impresiones`, "POST", cuerpo);
- 
-        mostrarMensaje("mensajeCrearImpresion", `Trabajo ${trabajo.id} creado.`);
-        mostrarJson("salidaCrearImpresion", conCostoFormateado(trabajo));
-        await listarImpresiones("/cola", "Trabajos en cola");
-    } catch (error){
-        elemento("salidaCrearImpresion").textContent = "";
-        mostrarMensaje("mensajeCrearImpresion", error.message, true);
-    }
-});
- 
-//consultar, iniciar, terminar y cancelar
-async function operarImpresion(accion, mensajeExito){
-    try {
-        const id = leerEntero("impTrabajoId", 1, "El identificador");
-        let ruta = `${API_IMPRESIONES}/impresiones/${id}`;
-        let opciones = {};
- 
-        if(accion === "iniciar" || accion === "cancelar"){
-            ruta += `/${accion}`;
-            opciones = { method: "PUT" };
-        }
- 
-        if(accion === "terminar"){
-            const hojasReales = leerEntero("impHojasReales", 1, "Las hojas reales");
-            ruta += `/terminar?hojasReales=${hojasReales}`;
-            opciones = { method: "PUT" };
-        }
- 
-        const trabajo = await solicitarJson(ruta, opciones);
- 
-        mostrarMensaje("mensajeOperarImpresion", mensajeExito);
-        mostrarJson("salidaOperarImpresion", conCostoFormateado(trabajo));
- 
-        if(accion !== "consultar"){
-            await listarImpresiones("", "Trabajos registrados");
-        }
-    } catch (error){
-        elemento("salidaOperarImpresion").textContent = "";
-        mostrarMensaje("mensajeOperarImpresion", error.message, true);
-    }
-}
- 
-elemento("btnConsultarImpresion").addEventListener("click", () => operarImpresion("consultar", "Consulta realizada correctamente."));
-elemento("btnIniciarImpresion").addEventListener("click", () => operarImpresion("iniciar", "Trabajo en impresion."));
-elemento("btnTerminarImpresion").addEventListener("click", () => operarImpresion("terminar", "Trabajo terminado."));
-elemento("btnCancelarImpresion").addEventListener("click", () => operarImpresion("cancelar", "Trabajo cancelado."));
- 
-listarImpresiones("/cola", "Trabajos en cola");
- 

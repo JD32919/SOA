@@ -188,6 +188,39 @@
             <div id="salidaConsumo" class="detalle"></div>
         </section>
 
+        <h2>Ventas</h2>
+
+        <section>
+            <h3>Ventas registradas</h3>
+            <button type="button" id="btnListarVentas">Ver ventas</button>
+
+            <table id="tablaVentas" hidden>
+                <thead>
+                    <tr>
+                        <th>UUID</th><th>Cliente</th><th>Total</th>
+                        <th>Estado</th><th>Fecha</th>
+                    </tr>
+                </thead>
+                <tbody id="cuerpoVentas"></tbody>
+            </table>
+
+            <form id="formVenta">
+                <label for="ventaClienteId">ID del cliente</label>
+                <input type="text" id="ventaClienteId">
+                <label for="ventaUuid">UUID de la operacion</label>
+                <input type="text" id="ventaUuid">
+                <button type="button" id="btnNuevaVentaUuid">Generar UUID nuevo</button>
+                <label for="ventaLineas">Lineas (producto:cantidad, separadas por coma)</label>
+                <input type="text" id="ventaLineas" placeholder="1:2, 2:5">
+
+                <button type="submit">Crear venta</button>
+                <button type="button" id="btnCancelarVenta">Cancelar venta</button>
+                <button type="button" id="btnConsultarVenta">Consultar venta</button>
+            </form>
+            <p id="mensajeVentas" class="mensaje"></p>
+            <div id="salidaVenta" class="detalle"></div>
+        </section>
+
         <h2>Impresiones</h2>
  
         <section>
