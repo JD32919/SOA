@@ -605,7 +605,7 @@ elemento("btnCancelarConsumo").addEventListener("click", async () => {
 elemento("consumoUuid").value = crypto.randomUUID();
 listarClientes();
 
-/impresiones
+//impresiones
  
 const API_IMPRESIONES = "http://localhost:9004/api";
  
