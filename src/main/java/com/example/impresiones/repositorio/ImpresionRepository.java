@@ -7,6 +7,5 @@ import java.util.List;
 
 public interface ImpresionRepository extends JpaRepository<Impresion, Long> {
 
-    // Trabajos de un estado, del más antiguo al más nuevo (sirve para la cola)
     List<Impresion> findByEstadoOrderByIdAsc(String estado);
 }

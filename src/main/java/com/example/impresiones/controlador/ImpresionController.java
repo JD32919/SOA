@@ -32,7 +32,6 @@ public class ImpresionController {
         this.servicio = servicio;
     }
 
-    // POST /api/impresiones
     @PostMapping
     public ResponseEntity<?> crear(@RequestBody Impresion datos) {
         if (datos.getClienteId() == null || datos.getClienteId() <= 0) {
@@ -55,19 +54,16 @@ public class ImpresionController {
         return ResponseEntity.status(201).body(servicio.crear(datos));
     }
 
-    // GET /api/impresiones
     @GetMapping
     public List<Impresion> obtenerTodas() {
         return servicio.obtenerTodas();
     }
 
-    // GET /api/impresiones/cola
     @GetMapping("/cola")
     public List<Impresion> obtenerCola() {
         return servicio.obtenerCola();
     }
 
-    // GET /api/impresiones/1
     @GetMapping("/{id}")
     public ResponseEntity<?> obtenerPorId(@PathVariable("id") Long id) {
         Optional<Impresion> resultado = servicio.buscarPorId(id);
@@ -77,7 +73,6 @@ public class ImpresionController {
         return ResponseEntity.ok(resultado.get());
     }
 
-    // PUT /api/impresiones/1/iniciar
     @PutMapping("/{id}/iniciar")
     public ResponseEntity<?> iniciar(@PathVariable("id") Long id) {
         Optional<Impresion> resultado = servicio.buscarPorId(id);
@@ -92,7 +87,6 @@ public class ImpresionController {
         return ResponseEntity.ok(servicio.guardar(impresion));
     }
 
-    // PUT /api/impresiones/1/terminar?hojasReales=12
     @PutMapping("/{id}/terminar")
     public ResponseEntity<?> terminar(@PathVariable("id") Long id,
                                       @RequestParam("hojasReales") int hojasReales) {
@@ -107,14 +101,12 @@ public class ImpresionController {
         if (!impresion.getEstado().equals("IMPRIMIENDO")) {
             return error(409, "Solo se puede terminar un trabajo que está IMPRIMIENDO");
         }
-        // Con las hojas realmente usadas se calcula el costo final
         impresion.setHojasReales(hojasReales);
         impresion.setCosto(servicio.calcularCosto(impresion.getTipo(), hojasReales));
         impresion.setEstado("TERMINADO");
         return ResponseEntity.ok(servicio.guardar(impresion));
     }
 
-    // PUT /api/impresiones/1/cancelar
     @PutMapping("/{id}/cancelar")
     public ResponseEntity<?> cancelar(@PathVariable("id") Long id) {
         Optional<Impresion> resultado = servicio.buscarPorId(id);
@@ -129,7 +121,6 @@ public class ImpresionController {
         return ResponseEntity.ok(servicio.guardar(impresion));
     }
 
-    // Respuesta de error con el mismo formato de la práctica: {"mensaje": "..."}
     private ResponseEntity<Map<String, String>> error(int codigo, String texto) {
         return ResponseEntity.status(codigo).body(Map.of("mensaje", texto));
     }

@@ -18,11 +18,11 @@ public class Impresion {
 
     private Long clienteId;
     private String documento;
-    private String tipo;            // "BN" o "COLOR"
+    private String tipo;
     private int hojasEstimadas;
-    private Integer hojasReales;    // se llena al terminar
+    private Integer hojasReales;
     private double costo;
-    private String estado;          // EN_COLA, IMPRIMIENDO, TERMINADO, CANCELADO
+    private String estado;
     private LocalDateTime fechaCreacion;
 
     public Long getId() {

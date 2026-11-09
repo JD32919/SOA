@@ -11,7 +11,6 @@ import java.util.Optional;
 @Service
 public class ImpresionService {
 
-    // Costo por hoja en pesos
     private static final double COSTO_BN = 0.50;
     private static final double COSTO_COLOR = 2.00;
 

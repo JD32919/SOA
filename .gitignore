@@ -1,6 +1,6 @@
 target/
-build/
-.gradle/
 nbproject/private/
-*.class
-*.zip
+.idea/
+*.iml
+.vscode/
+!.mvn/wrapper/maven-wrapper.jar
