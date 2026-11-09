@@ -7,7 +7,7 @@ Corre en el puerto **5500** y llama a cada servicio por REST.
 |---|---|---|
 | Catalogo e inventario | 9001 | ver, consultar y crear productos, cambiar existencias, reservar / cancelar / consultar reservas |
 | Clientes | 9003 | ver, consultar y crear clientes, habilitar / inhabilitar, cambiar limite, ver credito e historial, registrar / cancelar consumos |
-| Impresiones | 9004 | ver trabajos y la cola, crear trabajos, consultar, iniciar, terminar (con hojas reales) y cancelar |
+| Impresiones | 9004 | ver trabajos y la cola, crear trabajos, consultar, iniciar, terminar y cancelar |
 
 ## Encender los servicios
 
